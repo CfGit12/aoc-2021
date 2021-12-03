@@ -20,7 +20,7 @@ private fun part2(): Int {
     return oxygenRating * co2Rating
 }
 
-private fun findOxygenRating(index: Int, binaryNumbers: List<String>): String {
+private tailrec fun findOxygenRating(index: Int, binaryNumbers: List<String>): String {
     if (binaryNumbers.size == 1) return binaryNumbers[0]
     val ones = binaryNumbers.countOf(1, index)
     val zeroes = binaryNumbers.countOf(0, index)
@@ -29,7 +29,7 @@ private fun findOxygenRating(index: Int, binaryNumbers: List<String>): String {
     return findOxygenRating(index + 1, remainingNumbers)
 }
 
-private fun findCo2Rating(index: Int, binaryNumbers: List<String>): String {
+private tailrec fun findCo2Rating(index: Int, binaryNumbers: List<String>): String {
     if (binaryNumbers.size == 1) return binaryNumbers[0]
     val ones = binaryNumbers.countOf(1, index)
     val zeroes = binaryNumbers.countOf(0, index)
