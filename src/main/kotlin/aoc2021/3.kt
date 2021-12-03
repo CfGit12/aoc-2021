@@ -45,7 +45,7 @@ private fun List<Int>.inverted() =
     map { if (it == 1) 0 else 1 }
 
 private fun List<String>.mostCommonBits() =
-    (0 until this[0].length).map { input.mostCommonBit(it) }
+    (0 until this[0].length).map { this.mostCommonBit(it) }
 
 /**
  * Takes the digit from the specified position of each binary string, then constructs a map to determine
