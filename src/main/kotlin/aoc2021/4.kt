@@ -1,9 +1,9 @@
 package aoc2021
 
 private val input = readResourceFileAsLines("4.txt")
-private val numbers = input[0].split(",").toList().map { it.toInt() }
+private val numbers = input[0].split(",").map { it.toInt() }
 private val initialBoards = input
-    .subList(2, input.size)
+    .drop(1)
     .filter { it.isNotBlank() }
     .windowed(size = 5, step = 5)
     .map { listOfFiveNumberStrings ->
