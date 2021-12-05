@@ -5,12 +5,12 @@ import kotlin.math.floor
 
 private val input = readResourceFileAsLines("5.txt")
     .map {
-        val split = it.split(" -> ")
+        val (p1, p2) = it.split(" -> ")
         fun buildPoint(string: String): Point {
-            val xandy = string.split(",")
-            return Point(xandy[0].toInt(), xandy[1].toInt())
+            val (x, y) = string.split(",")
+            return Point(x.toInt(), y.toInt())
         }
-        Line(buildPoint(split[0]), buildPoint(split[1]))
+        Line(buildPoint(p1), buildPoint(p2))
     }
 
 fun main() {
@@ -19,14 +19,13 @@ fun main() {
 }
 
 private fun part1() =
-    calculateIntersections { it.isHorizontal || it.isVertical }
+    input.calculateIntersections { it.isHorizontal || it.isVertical }
 
 private fun part2() =
-    calculateIntersections { it.isHorizontal || it.isVertical || it.isDiagonal }
+    input.calculateIntersections { it.isHorizontal || it.isVertical || it.isDiagonal }
 
-private fun calculateIntersections(predicate: (Line) -> Boolean) =
-    input
-        .filter(predicate)
+private fun List<Line>.calculateIntersections(predicate: (Line) -> Boolean) =
+    this.filter(predicate)
         .flatMap { it.allPoints }
         .groupingBy { it }.eachCount()
         .count { it.value >= 2 }
