@@ -23,7 +23,7 @@ private fun part1() =
 private fun part2() =
     input
         .getLowPoints()
-        .map { findBasinFromLowPoint(it.key, input) }
+        .map { (coordinate, _) -> findBasinFromLowPoint(coordinate) }
         .map { it.size }
         .sortedDescending()
         .take(3)
@@ -31,28 +31,30 @@ private fun part2() =
 
 private fun Map<Coordinate, Int>.getLowPoints() =
     filter { (coordinate, height) ->
-        listOf(coordinate.above(), coordinate.below(), coordinate.toLeft(), coordinate.toRight())
+        coordinate
+            .getSurroundingCoordinates()
             .all {
-                this.getValue(it) > height
+                this.getHeight(it) > height
             }
     }
 
 private fun findBasinFromLowPoint(
-    startingCoordinate: Coordinate,
-    map: Map<Coordinate, Int>
+    startingCoordinate: Coordinate
 ): Set<Coordinate> {
-    val visitedCoordinates = mutableSetOf(startingCoordinate)
+    val visitedCoordinates = mutableSetOf<Coordinate>()
 
+    /**
+     * Recursively walk in all 4 directions, keeping a set of visited coordinates to a) prevent repeat visits, and
+     * b) return. Recursion base case is reaching a coordinate of height 9 or greater (greater being edge of map).
+     */
     fun walk(
         coordinate: Coordinate
     ) {
-        if (map.getValue(coordinate) >= 9) return
+        if (input.getHeight(coordinate) >= 9) return
 
         visitedCoordinates.add(coordinate)
 
-        val coordinatesToWalk =
-            listOf(coordinate.above(), coordinate.below(), coordinate.toLeft(), coordinate.toRight())
-        for (coordinateToWalk in coordinatesToWalk) {
+        for (coordinateToWalk in coordinate.getSurroundingCoordinates()) {
             if (coordinateToWalk !in visitedCoordinates) walk(coordinateToWalk)
         }
     }
@@ -61,10 +63,9 @@ private fun findBasinFromLowPoint(
     return visitedCoordinates
 }
 
-private fun Map<Coordinate, Int>.getValue(coordinate: Coordinate) =
+private fun Map<Coordinate, Int>.getHeight(coordinate: Coordinate) =
     this[coordinate] ?: Int.MAX_VALUE
 
-private fun Coordinate.above() = Coordinate(x, y - 1)
-private fun Coordinate.below() = Coordinate(x, y + 1)
-private fun Coordinate.toRight() = Coordinate(x + 1, y)
-private fun Coordinate.toLeft() = Coordinate(x - 1, y)
+private fun Coordinate.getSurroundingCoordinates() = listOf(
+    Coordinate(x, y - 1), Coordinate(x, y + 1), Coordinate(x + 1, y), Coordinate(x - 1, y)
+)
