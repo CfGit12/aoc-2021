@@ -9,3 +9,8 @@ fun readResourceFileAsIntLine(name: String) =
         .first()
         .split(",")
         .map { it.toInt() }
+
+data class Coordinate(
+    val x: Int,
+    val y: Int
+)

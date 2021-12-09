@@ -20,11 +20,6 @@ private enum class Direction {
     }
 }
 
-private data class Coordinate(
-    val x: Int,
-    val y: Int
-)
-
 private fun Coordinate.forward(distance: Int) =
     copy(x = x + distance)
 
