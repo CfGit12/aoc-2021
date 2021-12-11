@@ -1,5 +1,7 @@
 package aoc2021
 
+import java.lang.RuntimeException
+
 private typealias OctopusMap = Map<Coordinate, Octopus>
 
 private val input = buildMap {
@@ -13,8 +15,9 @@ private val input = buildMap {
 
 private data class Octopus(val energy: Int, val hasFlashed: Boolean) {
     fun boostEnergy() = copy(energy = energy + 1)
+    fun shouldFlash() = energy > 9 && !hasFlashed
     fun flash() = copy(hasFlashed = true)
-    fun reset() = Octopus(0, false)
+    fun reset() = if (hasFlashed) Octopus(0, false) else this
 }
 
 fun main() {
@@ -28,6 +31,7 @@ private fun part1(): Int {
     repeat(100) {
         octopusMap = octopusMap.boostEnergy()
         var coordinatesToFlash = octopusMap.getCoordinatesToFlash()
+
         while (coordinatesToFlash.isNotEmpty()) {
             for (coordinateToFlash in coordinatesToFlash) {
                 octopusMap = octopusMap.flashAtCoordinate(coordinateToFlash)
@@ -35,37 +39,38 @@ private fun part1(): Int {
             }
             coordinatesToFlash = octopusMap.getCoordinatesToFlash()
         }
-        octopusMap = octopusMap.mapValues { (_, octopus) ->
-            if (octopus.hasFlashed) octopus.reset() else octopus
-        }
+
+        octopusMap = octopusMap.resetOctopuses()
     }
     return flashCounter
 }
 
 private fun part2(): Int {
     var octopusMap = input
+
     for (step in 1..Int.MAX_VALUE) {
         octopusMap = octopusMap.boostEnergy()
         var coordinatesToFlash = octopusMap.getCoordinatesToFlash()
+
         while (coordinatesToFlash.isNotEmpty()) {
             for (coordinateToFlash in coordinatesToFlash) {
                 octopusMap = octopusMap.flashAtCoordinate(coordinateToFlash)
             }
             coordinatesToFlash = octopusMap.getCoordinatesToFlash()
         }
-        if (octopusMap.all { (_, octopus) -> octopus.hasFlashed }) return step
-        octopusMap = octopusMap.mapValues { (_, octopus) ->
-            if (octopus.hasFlashed) octopus.reset() else octopus
-        }
+
+        if (octopusMap.all { it.value.hasFlashed }) return step
+
+        octopusMap = octopusMap.resetOctopuses()
     }
-    return -1
+    throw RuntimeException("No synced step found")
 }
 
 private fun OctopusMap.boostEnergy(): OctopusMap =
-    mapValues { it.value.copy(energy = it.value.energy + 1) }
+    mapValues { it.value.boostEnergy() }
 
 private fun OctopusMap.getCoordinatesToFlash(): Set<Coordinate> =
-    filterValues { it.energy > 9 && !it.hasFlashed }
+    filterValues { it.shouldFlash() }
         .keys
 
 private fun OctopusMap.flashAtCoordinate(flashingCoordinate: Coordinate) =
@@ -76,3 +81,6 @@ private fun OctopusMap.flashAtCoordinate(flashingCoordinate: Coordinate) =
             else -> octopus
         }
     }
+
+private fun OctopusMap.resetOctopuses(): OctopusMap =
+    mapValues { it.value.reset() }
