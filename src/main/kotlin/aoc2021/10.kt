@@ -67,6 +67,8 @@ private fun Char.part1Score() =
         else -> throw RuntimeException()
     }
 
+val pairs = ("([{<" zip ")]}>").toMap()
+
 private fun Char.part2Score() =
     when (this) {
         ')' -> 1

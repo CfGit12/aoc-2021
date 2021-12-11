@@ -65,7 +65,3 @@ private fun findBasinFromLowPoint(
 
 private fun Map<Coordinate, Int>.getHeight(coordinate: Coordinate) =
     this[coordinate] ?: Int.MAX_VALUE
-
-private fun Coordinate.getSurroundingCoordinates() = listOf(
-    Coordinate(x, y - 1), Coordinate(x, y + 1), Coordinate(x + 1, y), Coordinate(x - 1, y)
-)
