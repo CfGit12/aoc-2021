@@ -20,7 +20,8 @@ private val inputInstructions =
 
 fun main() {
     println("Part 1: ${part1()}")
-    part2().printPaper()
+    println("Part 2:")
+    println(part2())
 }
 
 private fun part1() =
@@ -31,7 +32,7 @@ private fun part1() =
 private fun part2() =
     inputInstructions.fold(inputCoordinates) { paper, instruction ->
         paper.foldPaper(instruction)
-    }
+    }.asString()
 
 private fun Paper.foldPaper(instruction: Instruction): Paper {
     val toFoldOver = this.filter { it.getForInstruction(instruction) > instruction.pos }
@@ -42,17 +43,15 @@ private fun Paper.foldPaper(instruction: Instruction): Paper {
     return (this + newCoordinates).filter { it.getForInstruction(instruction) < instruction.pos }.toSet()
 }
 
-private fun Paper.printPaper() {
-    val maxX = this.maxByOrNull { it.x }!!.x
-    val maxY = this.maxByOrNull { it.y }!!.y
-
-    for (y in 0..maxY) {
-        for (x in 0..maxX) {
-            print(if (this.contains(Coordinate(x, y))) '#' else ' ')
+private fun Paper.asString() =
+    buildString {
+        for (y in 0..this@asString.maxOf { it.y }) {
+            for (x in 0..this@asString.maxOf { it.x }) {
+                append(if (this@asString.contains(Coordinate(x, y))) '#' else ' ')
+            }
+            appendLine()
         }
-        println()
     }
-}
 
 sealed class Instruction {
     abstract val pos: Int
